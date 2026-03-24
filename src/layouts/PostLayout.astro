@@ -1,0 +1,83 @@
+---
+/**
+ * PostLayout.astro — 文章详情页布局（含悬浮 TOC、Giscus 评论）
+ */
+import BaseLayout from '../components/layout/BaseLayout.astro';
+import TOC from '../components/blog/TOC.astro';
+import Comments from '../components/blog/Comments.astro';
+import { getReadingTime } from '../utils/reading-time';
+
+interface Props {
+  title: string;
+  date: string;
+  tags: string[];
+  description: string;
+  rawContent: string;
+}
+
+const { title, date, tags, description, rawContent } = Astro.props;
+const readingTime = getReadingTime(rawContent);
+
+// 格式化日期
+const dateObj = new Date(date);
+const formattedDate = dateObj.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 relative">
+    <div class="flex gap-10">
+      <!-- 文章正文 -->
+      <article class="flex-1 min-w-0">
+        <!-- 文章头部 -->
+        <header class="mb-10">
+          <h1 class="text-3xl sm:text-4xl font-bold text-[#2D2D2D] font-['Playfair_Display',serif] leading-tight mb-4">
+            {title}
+          </h1>
+          <div class="flex flex-wrap items-center gap-3 text-sm text-[#9CA3AF]">
+            <span>{formattedDate}</span>
+            <span>·</span>
+            <span>{readingTime}阅读</span>
+            {tags.length > 0 && (
+              <>
+                <span>·</span>
+                <div class="flex flex-wrap gap-2">
+                  {tags.map(tag => (
+                    <a
+                      href={`/blog?tag=${tag}`}
+                      class="px-2 py-0.5 rounded-full text-xs bg-[#FFF0EE] text-[#F4A7B9] hover:bg-[#F4A7B9] hover:text-white transition-colors"
+                    >
+                      #{tag}
+                    </a>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+          <hr class="mt-6 border-[#F3E8E8]" />
+        </header>
+
+        <!-- 文章正文（由父页面通过 slot 注入） -->
+        <div class="prose-blog">
+          <slot />
+        </div>
+
+        <!-- 上下篇导航（由父页面通过 prev/next slot 注入） -->
+        <slot name="nav" />
+
+        <!-- 评论区 -->
+        <div class="mt-12">
+          <Comments />
+        </div>
+      </article>
+
+      <!-- 右侧悬浮目录（桌面端） -->
+      <aside class="hidden xl:block w-56 shrink-0">
+        <TOC />
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

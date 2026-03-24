@@ -1,0 +1,16 @@
+---
+/**
+ * Footer.astro — 页脚
+ */
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-[#F3E8E8] py-8 mt-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-[#9CA3AF]">
+    <span>© {year} Arnold. All rights reserved.</span>
+    <div class="flex items-center gap-5">
+      <a href="https://github.com/Arnold5893" target="_blank" rel="noopener" class="hover:text-[#F4A7B9] transition-colors">GitHub</a>
+      <a href="/rss.xml" class="hover:text-[#F4A7B9] transition-colors">RSS</a>
+    </div>
+  </div>
+</footer>

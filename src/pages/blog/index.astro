@@ -1,0 +1,80 @@
+---
+/**
+ * blog/index.astro — 文章列表页
+ * 支持前端搜索和标签筛选
+ */
+import BaseLayout from '../../components/layout/BaseLayout.astro';
+import PostCard from '../../components/blog/PostCard.astro';
+import TagFilter from '../../components/blog/TagFilter.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+// 收集所有标签（去重）
+const allTags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
+---
+
+<BaseLayout title="Blog" description="Arnold 的所有文章列表">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+    <!-- 页面标题 -->
+    <header class="mb-10">
+      <h1 class="text-3xl font-bold text-[#2D2D2D] font-['Playfair_Display',serif] mb-2">Blog</h1>
+      <p class="text-[#9CA3AF]">共 {posts.length} 篇文章</p>
+    </header>
+
+    <!-- 搜索框 -->
+    <div class="relative mb-6">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <input
+        id="search-input"
+        type="text"
+        placeholder="搜索文章标题或摘要..."
+        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#F3E8E8] bg-white text-sm text-[#2D2D2D] placeholder-[#9CA3AF] focus:outline-none focus:border-[#F4A7B9] transition-colors"
+      />
+    </div>
+
+    <!-- 标签筛选 -->
+    {allTags.length > 0 && (
+      <div class="mb-8">
+        <TagFilter tags={allTags} />
+      </div>
+    )}
+
+    <!-- 文章网格 -->
+    <div id="posts-grid" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map(post => (
+        <div data-tags={JSON.stringify(post.data.tags)} data-title={post.data.title.toLowerCase()} data-desc={post.data.description.toLowerCase()}>
+          <PostCard post={post} />
+        </div>
+      ))}
+    </div>
+
+    <!-- 无结果提示 -->
+    <p id="no-results" class="hidden text-center text-[#9CA3AF] py-16">暂无匹配的文章</p>
+  </div>
+</BaseLayout>
+
+<script>
+  const input = document.getElementById('search-input') as HTMLInputElement;
+  const items = document.querySelectorAll<HTMLElement>('#posts-grid > [data-title]');
+  const noResults = document.getElementById('no-results')!;
+
+  function filterBySearch() {
+    const q = input.value.trim().toLowerCase();
+    let visible = 0;
+    items.forEach(item => {
+      const match = !q || item.dataset.title!.includes(q) || item.dataset.desc!.includes(q);
+      // 只在当前 tag 过滤器允许显示时才考虑搜索
+      if (item.style.display !== 'none' || !q) {
+        item.style.display = match ? '' : 'none';
+      }
+      if (item.style.display !== 'none') visible++;
+    });
+    noResults.classList.toggle('hidden', visible > 0);
+  }
+
+  input.addEventListener('input', filterBySearch);
+</script>

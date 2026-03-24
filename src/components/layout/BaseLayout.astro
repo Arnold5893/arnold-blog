@@ -1,0 +1,54 @@
+---
+/**
+ * BaseLayout.astro — 全局基础布局，注入 SEO meta 和全局样式
+ */
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import '../../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = "Arnold's personal blog, documenting study and life",
+  ogImage = "/images/hero.jpg",
+} = Astro.props;
+
+const siteTitle = title === 'Arnold' ? 'Arnold' : `${title} · Arnold`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO -->
+    <title>{siteTitle}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={siteTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:type" content="website" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="/images/favicon-lixue.jpg" />
+
+    <!-- RSS -->
+    <link rel="alternate" type="application/rss+xml" title="Arnold's Blog" href="/rss.xml" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

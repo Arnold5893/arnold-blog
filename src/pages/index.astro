@@ -1,0 +1,42 @@
+---
+/**
+ * index.astro — 首页
+ */
+import BaseLayout from '../components/layout/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import RecentPosts from '../components/home/RecentPosts.astro';
+import Sakura from '../components/home/Sakura.astro';
+import Guestbook from '../components/home/Guestbook.astro';
+import SiteStats from '../components/home/SiteStats.astro';
+---
+
+<BaseLayout title="Arnold" description="Arnold's personal blog,documenting my study and life.">
+  <!-- 花瓣飘落背景 -->
+  <Sakura />
+
+  <!-- Hero 区 -->
+  <Hero />
+
+  <!-- 分割线 -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+    <hr class="border-[#F3E8E8]" />
+  </div>
+
+  <!-- 最新文章 -->
+  <div class="mt-12">
+    <RecentPosts />
+  </div>
+
+  <!-- 分割线 -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 mt-4">
+    <hr class="border-[#F3E8E8]" />
+  </div>
+
+  <!-- 留言板 -->
+  <div class="mt-12">
+    <Guestbook />
+  </div>
+
+  <!-- 站点统计（访客量 + 运行时间） -->
+  <SiteStats />
+</BaseLayout>

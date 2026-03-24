@@ -1,0 +1,53 @@
+---
+/**
+ * TagFilter.astro — 标签筛选栏（前端过滤，配合 blog/index.astro 使用）
+ */
+interface Props {
+  tags: string[];
+}
+const { tags } = Astro.props;
+---
+
+<div class="flex flex-wrap gap-2" id="tag-filter">
+  <button
+    data-tag=""
+    class="tag-btn px-3 py-1 rounded-full text-sm border border-[#F3E8E8] text-[#9CA3AF] hover:border-[#F4A7B9] hover:text-[#F4A7B9] transition-colors duration-200 active"
+  >
+    全部
+  </button>
+  {tags.map(tag => (
+    <button
+      data-tag={tag}
+      class="tag-btn px-3 py-1 rounded-full text-sm border border-[#F3E8E8] text-[#9CA3AF] hover:border-[#F4A7B9] hover:text-[#F4A7B9] transition-colors duration-200"
+    >
+      #{tag}
+    </button>
+  ))}
+</div>
+
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('.tag-btn');
+  const cards = document.querySelectorAll<HTMLElement>('[data-tags]');
+
+  // 高亮 active 按钮样式
+  function setActive(btn: HTMLButtonElement) {
+    btns.forEach(b => b.classList.remove('bg-[#F4A7B9]', 'text-white', 'border-[#F4A7B9]', 'active'));
+    btn.classList.add('bg-[#F4A7B9]', 'text-white', 'border-[#F4A7B9]', 'active');
+  }
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      setActive(btn);
+      const tag = btn.dataset.tag ?? '';
+      cards.forEach(card => {
+        const cardTags: string[] = JSON.parse(card.dataset.tags ?? '[]');
+        const show = tag === '' || cardTags.includes(tag);
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+
+  // 初始化：激活"全部"按钮
+  const allBtn = document.querySelector<HTMLButtonElement>('[data-tag=""]');
+  if (allBtn) setActive(allBtn);
+</script>

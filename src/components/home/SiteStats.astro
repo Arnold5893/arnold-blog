@@ -1,0 +1,56 @@
+---
+/**
+ * SiteStats.astro — 站点统计：访客总量 + 博客运行时间
+ * 访客计数使用不蒜子（busuanzi），纯静态无需后端
+ * 运行时间从 BLOG_START 开始计算，客户端 JS 动态更新
+ */
+
+// 博客上线日期，修改为实际上线日期
+const BLOG_START = '2026-03-23';
+---
+
+<div class="border-t border-[#F3E8E8] py-6">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-center gap-6 text-xs text-[#9CA3AF]">
+    <!-- 访客总量（不蒜子） -->
+    <span class="flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+      </svg>
+      访客总量：<span id="busuanzi_value_site_uv">--</span>
+    </span>
+
+    <span class="text-[#F3E8E8]">|</span>
+
+    <!-- 博客运行时间 -->
+    <span class="flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      已运行：<span id="site-uptime">计算中...</span>
+    </span>
+  </div>
+</div>
+
+<!-- 不蒜子访客计数脚本 -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<script define:vars={{ BLOG_START }}>
+  function updateUptime() {
+    const start = new Date(BLOG_START).getTime();
+    const now = Date.now();
+    const diff = now - start;
+
+    const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const years  = Math.floor(days / 365);
+    const months = Math.floor((days % 365) / 30);
+    const remDays = days % 30;
+
+    document.getElementById('site-uptime').textContent =
+      `${years}y ${months}m ${remDays}d`;
+  }
+
+  updateUptime();
+  // 每分钟刷新一次（跨日时自动更新）
+  setInterval(updateUptime, 60000);
+</script>

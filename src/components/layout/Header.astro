@@ -1,0 +1,97 @@
+---
+/**
+ * Header.astro — 顶部导航栏，移动端支持汉堡菜单
+ */
+const navLinks = [
+  { href: '/',         label: '首页' },
+  { href: '/blog',     label: 'Blog' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/about',    label: 'About' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 bg-[#FFFAF8]/90 backdrop-blur-sm border-b border-[#F3E8E8]">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <!-- 博客名 -->
+    <a href="/" class="text-xl font-bold text-[#2D2D2D] font-['Playfair_Display',serif] hover:text-[#F4A7B9] transition-colors">
+      Arnold
+    </a>
+
+    <!-- 桌面端导航 -->
+    <nav class="hidden md:flex items-center gap-8">
+      {navLinks.map(({ href, label }) => (
+        <a
+          href={href}
+          class:list={[
+            "text-sm transition-colors duration-200",
+            currentPath === href || (href !== '/' && currentPath.startsWith(href))
+              ? "text-[#F4A7B9] font-medium"
+              : "text-[#9CA3AF] hover:text-[#2D2D2D]"
+          ]}
+        >
+          {label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- 移动端汉堡按钮 -->
+    <button
+      id="menu-btn"
+      class="md:hidden flex flex-col gap-1.5 p-2 text-[#2D2D2D]"
+      aria-label="打开菜单"
+    >
+      <span class="block w-5 h-0.5 bg-current transition-all duration-300" id="bar1"></span>
+      <span class="block w-5 h-0.5 bg-current transition-all duration-300" id="bar2"></span>
+      <span class="block w-5 h-0.5 bg-current transition-all duration-300" id="bar3"></span>
+    </button>
+  </div>
+
+  <!-- 移动端展开菜单 -->
+  <nav
+    id="mobile-menu"
+    class="hidden md:hidden border-t border-[#F3E8E8] bg-[#FFFAF8]"
+  >
+    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col gap-4">
+      {navLinks.map(({ href, label }) => (
+        <a
+          href={href}
+          class:list={[
+            "text-base transition-colors duration-200",
+            currentPath === href || (href !== '/' && currentPath.startsWith(href))
+              ? "text-[#F4A7B9] font-medium"
+              : "text-[#9CA3AF] hover:text-[#2D2D2D]"
+          ]}
+        >
+          {label}
+        </a>
+      ))}
+    </div>
+  </nav>
+</header>
+
+<script>
+  const btn = document.getElementById('menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const bar1 = document.getElementById('bar1');
+  const bar2 = document.getElementById('bar2');
+  const bar3 = document.getElementById('bar3');
+
+  let open = false;
+
+  btn?.addEventListener('click', () => {
+    open = !open;
+    menu?.classList.toggle('hidden', !open);
+    // 汉堡 → X 动画
+    if (open) {
+      bar1!.style.transform = 'translateY(8px) rotate(45deg)';
+      bar2!.style.opacity = '0';
+      bar3!.style.transform = 'translateY(-8px) rotate(-45deg)';
+    } else {
+      bar1!.style.transform = '';
+      bar2!.style.opacity = '';
+      bar3!.style.transform = '';
+    }
+  });
+</script>

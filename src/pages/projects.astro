@@ -1,0 +1,30 @@
+---
+/**
+ * projects.astro — 项目展示页
+ */
+import BaseLayout from '../components/layout/BaseLayout.astro';
+import ProjectCard from '../components/projects/ProjectCard.astro';
+
+const projects = [
+  {
+    name: 'Arnold Blog',
+    description: '基于 Astro + Tailwind CSS 搭建的个人博客，支持 MDX 文章、Giscus 评论',
+    techs: ['Astro', 'Tailwind CSS', 'TypeScript', 'MDX'],
+    github: 'https://github.com/Arnold5893',
+  },
+  // 在此添加更多项目...
+];
+---
+
+<BaseLayout title="Projects" description="Arnold 的项目展示">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+    <header class="mb-10">
+      <h1 class="text-3xl font-bold text-[#2D2D2D] font-['Playfair_Display',serif] mb-2">Projects</h1>
+      <p class="text-[#9CA3AF]">一些我做过的项目</p>
+    </header>
+
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map(p => <ProjectCard {...p} />)}
+    </div>
+  </div>
+</BaseLayout>

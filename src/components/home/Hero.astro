@@ -1,0 +1,78 @@
+---
+/**
+ * Hero.astro — 首页 Hero 区
+ * 左侧：打字机效果介绍文字 + 社交链接
+ * 右侧：动漫立绘（浮动动画）
+ */
+---
+
+<section class="relative max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-24 flex flex-col-reverse md:flex-row items-center gap-10 z-10">
+
+  <!-- 左侧：文字内容 -->
+  <div class="flex-1 text-center md:text-left">
+    <p class="text-[#9CA3AF] text-sm mb-3 tracking-widest uppercase">Welcome to my blog</p>
+    <h1 class="text-4xl sm:text-5xl font-bold text-[#2D2D2D] font-['Playfair_Display',serif] mb-4">
+      Hi, I'm <span class="text-[#F4A7B9]">Arnold</span>
+    </h1>
+
+    <!-- 打字机效果 -->
+    <p class="text-lg text-[#9CA3AF] mb-8 min-h-[1.8em]">
+      <span id="typewriter"></span><span class="typewriter-cursor text-[#F4A7B9]">|</span>
+    </p>
+
+    <p class="text-[#2D2D2D] text-base leading-relaxed mb-8 max-w-md mx-auto md:mx-0">
+      Live an undefined life.<br />
+      stay curious.
+    </p>
+
+  </div>
+
+  <!-- 右侧：立绘图 -->
+  <div class="flex-shrink-0 flex justify-center md:justify-end md:translate-x-[7rem]">
+    <div class="animate-float relative">
+      <!-- 装饰光晕 -->
+      <div class="absolute inset-0 rounded-full bg-[#F4A7B9]/20 blur-3xl scale-110"></div>
+      <img
+        src="/images/hero.jpg"
+        alt="Arnold 的动漫立绘"
+        class="relative w-72 sm:w-[26rem] md:w-[32rem] lg:w-[38rem] object-contain drop-shadow-2xl"
+        loading="eager"
+      />
+    </div>
+  </div>
+</section>
+
+<script>
+  // 打字机效果
+  const phrases = [
+    '一只笨蛋脆脆鼠'
+  ];
+
+  const el = document.getElementById('typewriter')!;
+  let phraseIdx = 0;
+  let charIdx = 0;
+  let deleting = false;
+
+  function tick() {
+    const current = phrases[phraseIdx];
+    if (!deleting) {
+      el.textContent = current.slice(0, ++charIdx);
+      if (charIdx === current.length) {
+        deleting = true;
+        setTimeout(tick, 1800);
+        return;
+      }
+    } else {
+      el.textContent = current.slice(0, --charIdx);
+      if (charIdx === 0) {
+        deleting = false;
+        phraseIdx = (phraseIdx + 1) % phrases.length;
+        setTimeout(tick, 400);
+        return;
+      }
+    }
+    setTimeout(tick, deleting ? 60 : 100);
+  }
+
+  tick();
+</script>

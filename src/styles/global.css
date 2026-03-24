@@ -1,0 +1,130 @@
+/* Google Fonts 必须在 tailwindcss 之前，避免 CSS @import 顺序警告 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+/* ===== CSS 变量 / 配色方案 ===== */
+:root {
+  --bg-main:    #FFFAF8;
+  --bg-card:    #FFF0EE;
+  --accent:     #F4A7B9;
+  --accent-alt: #A8D8C8;
+  --text:       #2D2D2D;
+  --text-muted: #9CA3AF;
+  --divider:    #F3E8E8;
+}
+
+/* ===== 基础全局样式 ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text);
+  font-family: 'Noto Serif SC', 'Source Han Serif CN', STSong, serif;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* ===== 动画：Hero 立绘浮动 ===== */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ===== 动画：花瓣飘落 ===== */
+@keyframes sakura-fall {
+  0%   { transform: translateY(-10px) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+.sakura-petal {
+  position: fixed;
+  pointer-events: none;
+  animation: sakura-fall linear infinite;
+  z-index: 0;
+}
+
+/* ===== 打字机光标 ===== */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.typewriter-cursor {
+  display: inline-block;
+  animation: blink 1s ease-in-out infinite;
+}
+
+/* ===== 文章正文排版 ===== */
+.prose-blog {
+  max-width: 680px;
+  margin: 0 auto;
+}
+.prose-blog h1,
+.prose-blog h2,
+.prose-blog h3,
+.prose-blog h4 {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+.prose-blog h2 { font-size: 1.5rem; border-bottom: 2px solid var(--divider); padding-bottom: 0.25rem; }
+.prose-blog h3 { font-size: 1.25rem; }
+.prose-blog p  { margin-bottom: 1.25rem; }
+.prose-blog a  { color: #d97199; text-decoration: underline; text-underline-offset: 3px; }
+.prose-blog a:hover { color: var(--accent); }
+.prose-blog code {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg-card);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.875em;
+}
+.prose-blog pre {
+  position: relative;
+  border-radius: 0.75rem;
+  overflow: auto;
+  margin: 1.5rem 0;
+}
+.prose-blog pre code {
+  background: transparent;
+  padding: 0;
+}
+.prose-blog blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 1.5rem 0;
+}
+.prose-blog ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+.prose-blog ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
+.prose-blog li { margin-bottom: 0.25rem; }
+.prose-blog hr { border-color: var(--divider); margin: 2rem 0; }
+.prose-blog img { border-radius: 0.5rem; max-width: 100%; }
+
+/* ===== 代码块复制按钮 ===== */
+.copy-btn {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(255,255,255,0.15);
+  color: #ccc;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.copy-btn:hover { background: rgba(255,255,255,0.3); color: #fff; }
+
+/* ===== 滚动条美化 ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-main); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }

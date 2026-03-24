@@ -1,0 +1,38 @@
+---
+/**
+ * Sakura.astro — 花瓣飘落背景动画
+ * 移动端减少粒子数量以保证性能
+ */
+---
+
+<div id="sakura-container" class="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true"></div>
+
+<script>
+  // 移动端减少粒子数
+  const count = window.innerWidth < 640 ? 8 : 18;
+  const colors = ['#F4A7B9', '#A8D8C8', '#F9C4D1', '#b8e4d8'];
+  const container = document.getElementById('sakura-container')!;
+
+  for (let i = 0; i < count; i++) {
+    const petal = document.createElement('div');
+    const size = Math.random() * 10 + 6; // 6px ~ 16px
+    const left = Math.random() * 100;
+    const delay = Math.random() * 10;
+    const duration = Math.random() * 8 + 6; // 6s ~ 14s
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    petal.className = 'sakura-petal';
+    petal.style.cssText = `
+      left: ${left}%;
+      top: -20px;
+      width: ${size}px;
+      height: ${size}px;
+      background: ${color};
+      border-radius: 50% 0 50% 0;
+      opacity: ${Math.random() * 0.5 + 0.3};
+      animation-duration: ${duration}s;
+      animation-delay: ${delay}s;
+    `;
+    container.appendChild(petal);
+  }
+</script>
