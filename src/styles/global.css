@@ -154,23 +154,6 @@ html:not(.dark) #starry-background {
 }
 .copy-btn:hover { background: rgba(255,255,255,0.3); color: #fff; }
 
-/* ===== 立绘图暗色模式边缘融合 ===== */
-/* 仅在 .dark 下生效，白天模式不做任何处理 */
-.dark .hero-avatar-wrapper {
-  -webkit-mask-image: radial-gradient(
-    ellipse 75% 80% at 55% 45%,
-    black 40%,
-    rgba(0, 0, 0, 0.6) 65%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    ellipse 75% 80% at 55% 45%,
-    black 40%,
-    rgba(0, 0, 0, 0.6) 65%,
-    transparent 100%
-  );
-}
-
 /* ===== 滚动条美化 ===== */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-main); }
