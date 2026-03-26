@@ -4,6 +4,7 @@
  */
 import Header from './Header.astro';
 import Footer from './Footer.astro';
+import StarryBackground from './StarryBackground.astro';
 import '../../styles/global.css';
 
 interface Props {
@@ -43,8 +44,24 @@ const siteTitle = title === 'Arnold' ? 'Arnold' : `${title} · Arnold`;
 
     <!-- RSS -->
     <link rel="alternate" type="application/rss+xml" title="Arnold's Blog" href="/rss.xml" />
+
+    <!--
+      防 FOUC：在页面渲染前立即根据 localStorage / prefers-color-scheme 设置主题
+      必须为内联脚本，不能 defer/async
+    -->
+    <script is:inline>
+      (function () {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
   <body class="min-h-screen flex flex-col">
+    <!-- 星空背景（暗色模式下通过 CSS 显示，亮色模式隐藏） -->
+    <StarryBackground />
     <Header />
     <main class="flex-1">
       <slot />

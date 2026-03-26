@@ -1,28 +1,57 @@
 ---
 /**
  * Guestbook.astro — 首页留言区（复用 Giscus，映射到固定 key）
+ * 根据当前主题动态加载，并监听主题切换事件实时更新
  */
 ---
 
-<section class="max-w-3xl mx-auto px-4 sm:px-6 pb-16 z-10 relative">
-  <h2 class="text-2xl font-bold text-[#2D2D2D] font-['Playfair_Display',serif] mb-2">留言板</h2>
-  <p class="text-sm text-[#9CA3AF] mb-6">欢迎留下你的足迹 ✨</p>
-
-  <script
-    src="https://giscus.app/client.js"
-    data-repo="Arnold5893/blog-comments"
-    data-repo-id="R_kgDORuR-Ng"
-    data-category="Announcements"
-    data-category-id="DIC_kwDORuR-Ns4C5Ezb"
-    data-mapping="specific"
-    data-term="guestbook"
-    data-strict="0"
-    data-reactions-enabled="1"
-    data-emit-metadata="0"
-    data-input-position="top"
-    data-theme="light"
-    data-lang="zh-CN"
-    crossorigin="anonymous"
-    async
-  ></script>
+<section id="guestbook-section" class="max-w-3xl mx-auto px-4 sm:px-6 pb-16 z-10 relative">
+  <h2 class="text-2xl font-bold font-['Playfair_Display',serif] mb-2
+             text-[#2D2D2D] dark:text-[#FFFAF8]">
+    留言板
+  </h2>
+  <p class="text-sm mb-6 text-[#9CA3AF] dark:text-[#a0a0c0]">
+    欢迎留下你的足迹 ✨
+  </p>
 </section>
+
+<script>
+  /** 加载 Giscus 留言板，theme 根据当前主题决定 */
+  function loadGuestbook(): void {
+    const isDark = document.documentElement.classList.contains('dark');
+    const script  = document.createElement('script');
+
+    script.src = 'https://giscus.app/client.js';
+    script.setAttribute('data-repo',              'Arnold5893/blog-comments');
+    script.setAttribute('data-repo-id',           'R_kgDORuR-Ng');
+    script.setAttribute('data-category',          'Announcements');
+    script.setAttribute('data-category-id',       'DIC_kwDORuR-Ns4C5Ezb');
+    script.setAttribute('data-mapping',           'specific');
+    script.setAttribute('data-term',              'guestbook');
+    script.setAttribute('data-strict',            '0');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-emit-metadata',     '0');
+    script.setAttribute('data-input-position',    'top');
+    script.setAttribute('data-theme',             isDark ? 'dark' : 'light');
+    script.setAttribute('data-lang',              'zh-CN');
+    script.crossOrigin = 'anonymous';
+    script.async       = true;
+
+    document.getElementById('guestbook-section')!.appendChild(script);
+  }
+
+  loadGuestbook();
+
+  /** 主题切换时通知 Giscus iframe 更新主题 */
+  document.addEventListener('theme-change', (e: Event) => {
+    const isDark = (e as CustomEvent<{ dark: boolean }>).detail.dark;
+    // 留言板 iframe（若存在多个取最后一个）
+    const iframes = document.querySelectorAll<HTMLIFrameElement>('iframe.giscus-frame');
+    iframes.forEach(iframe => {
+      iframe.contentWindow?.postMessage(
+        { giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+        'https://giscus.app',
+      );
+    });
+  });
+</script>

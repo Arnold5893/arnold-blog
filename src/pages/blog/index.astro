@@ -19,8 +19,9 @@ const allTags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
   <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
     <!-- 页面标题 -->
     <header class="mb-10">
-      <h1 class="text-3xl font-bold text-[#2D2D2D] font-['Playfair_Display',serif] mb-2">Blog</h1>
-      <p class="text-[#9CA3AF]">共 {posts.length} 篇文章</p>
+      <h1 class="text-3xl font-bold font-['Playfair_Display',serif] mb-2
+                 text-[#2D2D2D] dark:text-[#FFFAF8]">Blog</h1>
+      <p class="text-[#9CA3AF] dark:text-[#a0a0c0]">共 {posts.length} 篇文章</p>
     </header>
 
     <!-- 搜索框 -->
@@ -32,7 +33,12 @@ const allTags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
         id="search-input"
         type="text"
         placeholder="搜索文章标题或摘要..."
-        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#F3E8E8] bg-white text-sm text-[#2D2D2D] placeholder-[#9CA3AF] focus:outline-none focus:border-[#F4A7B9] transition-colors"
+        class="w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm transition-colors focus:outline-none
+               border-[#F3E8E8] dark:border-[#2a2a40]
+               bg-white dark:bg-[#1A1A2E]
+               text-[#2D2D2D] dark:text-[#FFFAF8]
+               placeholder-[#9CA3AF] dark:placeholder-[#7070a0]
+               focus:border-[#F4A7B9] dark:focus:border-[#D4919F]"
       />
     </div>
 
@@ -53,7 +59,8 @@ const allTags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
     </div>
 
     <!-- 无结果提示 -->
-    <p id="no-results" class="hidden text-center text-[#9CA3AF] py-16">暂无匹配的文章</p>
+    <p id="no-results" class="hidden text-center py-16
+                              text-[#9CA3AF] dark:text-[#7070a0]">暂无匹配的文章</p>
   </div>
 </BaseLayout>
 

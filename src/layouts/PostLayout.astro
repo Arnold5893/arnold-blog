@@ -34,10 +34,12 @@ const formattedDate = dateObj.toLocaleDateString('zh-CN', {
       <article class="flex-1 min-w-0">
         <!-- 文章头部 -->
         <header class="mb-10">
-          <h1 class="text-3xl sm:text-4xl font-bold text-[#2D2D2D] font-['Playfair_Display',serif] leading-tight mb-4">
+          <h1 class="text-3xl sm:text-4xl font-bold font-['Playfair_Display',serif] leading-tight mb-4
+                     text-[#2D2D2D] dark:text-[#FFFAF8]">
             {title}
           </h1>
-          <div class="flex flex-wrap items-center gap-3 text-sm text-[#9CA3AF]">
+          <div class="flex flex-wrap items-center gap-3 text-sm
+                      text-[#9CA3AF] dark:text-[#7070a0]">
             <span>{formattedDate}</span>
             <span>·</span>
             <span>{readingTime}阅读</span>
@@ -48,7 +50,11 @@ const formattedDate = dateObj.toLocaleDateString('zh-CN', {
                   {tags.map(tag => (
                     <a
                       href={`/blog?tag=${tag}`}
-                      class="px-2 py-0.5 rounded-full text-xs bg-[#FFF0EE] text-[#F4A7B9] hover:bg-[#F4A7B9] hover:text-white transition-colors"
+                      class="px-2 py-0.5 rounded-full text-xs transition-colors
+                             bg-[#FFF0EE] dark:bg-[#2a1520]
+                             text-[#F4A7B9] dark:text-[#D4919F]
+                             hover:bg-[#F4A7B9] dark:hover:bg-[#D4919F]
+                             hover:text-white dark:hover:text-white"
                     >
                       #{tag}
                     </a>
@@ -57,7 +63,7 @@ const formattedDate = dateObj.toLocaleDateString('zh-CN', {
               </>
             )}
           </div>
-          <hr class="mt-6 border-[#F3E8E8]" />
+          <hr class="mt-6 border-[#F3E8E8] dark:border-[#2a2a40]" />
         </header>
 
         <!-- 文章正文（由父页面通过 slot 注入） -->

@@ -13,10 +13,11 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 {posts.length > 0 && (
   <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-20 z-10 relative">
     <div class="flex items-center justify-between mb-8">
-      <h2 class="text-2xl font-bold text-[#2D2D2D] font-['Playfair_Display',serif]">
+      <h2 class="text-2xl font-bold font-['Playfair_Display',serif]
+                 text-[#2D2D2D] dark:text-[#FFFAF8]">
         最新文章
       </h2>
-      <a href="/blog" class="text-sm text-[#F4A7B9] hover:underline">
+      <a href="/blog" class="text-sm hover:underline text-[#F4A7B9] dark:text-[#D4919F]">
         查看全部 →
       </a>
     </div>

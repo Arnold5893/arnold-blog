@@ -11,14 +11,22 @@ const { tags } = Astro.props;
 <div class="flex flex-wrap gap-2" id="tag-filter">
   <button
     data-tag=""
-    class="tag-btn px-3 py-1 rounded-full text-sm border border-[#F3E8E8] text-[#9CA3AF] hover:border-[#F4A7B9] hover:text-[#F4A7B9] transition-colors duration-200 active"
+    class="tag-btn px-3 py-1 rounded-full text-sm border transition-colors duration-200
+               border-[#F3E8E8] dark:border-[#2a2a40]
+               text-[#9CA3AF] dark:text-[#a0a0c0]
+               hover:border-[#F4A7B9] dark:hover:border-[#D4919F]
+               hover:text-[#F4A7B9] dark:hover:text-[#D4919F] active"
   >
     全部
   </button>
   {tags.map(tag => (
     <button
       data-tag={tag}
-      class="tag-btn px-3 py-1 rounded-full text-sm border border-[#F3E8E8] text-[#9CA3AF] hover:border-[#F4A7B9] hover:text-[#F4A7B9] transition-colors duration-200"
+      class="tag-btn px-3 py-1 rounded-full text-sm border transition-colors duration-200
+               border-[#F3E8E8] dark:border-[#2a2a40]
+               text-[#9CA3AF] dark:text-[#a0a0c0]
+               hover:border-[#F4A7B9] dark:hover:border-[#D4919F]
+               hover:text-[#F4A7B9] dark:hover:text-[#D4919F]"
     >
       #{tag}
     </button>

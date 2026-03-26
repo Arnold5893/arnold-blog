@@ -5,12 +5,15 @@
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-[#F3E8E8] py-8 mt-16">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-[#9CA3AF]">
+<footer class="border-t border-[#F3E8E8] dark:border-[#2a2a40] py-8 mt-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm
+              text-[#9CA3AF] dark:text-[#7070a0]">
     <span>© {year} Arnold. All rights reserved.</span>
     <div class="flex items-center gap-5">
-      <a href="https://github.com/Arnold5893" target="_blank" rel="noopener" class="hover:text-[#F4A7B9] transition-colors">GitHub</a>
-      <a href="/rss.xml" class="hover:text-[#F4A7B9] transition-colors">RSS</a>
+      <a href="https://github.com/Arnold5893" target="_blank" rel="noopener"
+         class="transition-colors hover:text-[#F4A7B9] dark:hover:text-[#D4919F]">GitHub</a>
+      <a href="/rss.xml"
+         class="transition-colors hover:text-[#F4A7B9] dark:hover:text-[#D4919F]">RSS</a>
     </div>
   </div>
 </footer>

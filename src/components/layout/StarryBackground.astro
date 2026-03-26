@@ -1,0 +1,250 @@
+---
+/**
+ * StarryBackground.astro — 暗色模式专属星空背景
+ * 三层叠加：繁星闪烁 + 流星划过 + 星座连线
+ * 仅在暗色模式下显示
+ */
+---
+
+<canvas
+  id="starry-background"
+  class="fixed inset-0 w-full h-full pointer-events-none"
+  style="z-index: 0;"
+  aria-hidden="true"
+></canvas>
+
+<script>
+  // ---- 类型定义 ----
+  interface Star {
+    x: number; y: number; r: number;
+    color: string; phase: number; period: number;
+  }
+
+  interface Meteor {
+    /** 初始头部 X */
+    ox: number;
+    /** 初始头部 Y */
+    oy: number;
+    /** 速度 px/ms */
+    vx: number; vy: number;
+    color: string; width: number;
+    /** 拖尾长度 px */
+    length: number;
+    startTime: number;
+    /** 动画总时长 ms */
+    duration: number;
+  }
+
+  // ---- 固定星座形状（仙后座 W 型简化版） ----
+  const CONST_PTS: [number, number][] = [
+    [20, 100], [60, 40], [100, 80], [140, 20], [175, 60], [160, 120],
+  ];
+  const CONST_EDGES: [number, number][] = [
+    [0, 1], [1, 2], [2, 3], [3, 4], [4, 5],
+  ];
+  const CONST_COLORS = ['#FFFAF8', '#D4919F', '#FFFAF8', '#D4919F', '#FFFAF8', '#FFFAF8'];
+  const CONST_RADII  = [2, 1.8, 2, 2.2, 1.8, 2];
+
+  // ---- 运行状态 ----
+  const canvas = document.getElementById('starry-background') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d')!;
+
+  let stars: Star[] = [];
+  let meteors: Meteor[] = [];
+  let constPhases: number[] = [];
+  const constPeriods: number[] = CONST_PTS.map(() => 1500 + Math.random() * 2000);
+
+  // ---- 初始化画布与星点 ----
+  function init(): void {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const count = window.innerWidth < 640 ? 60 : 120;
+    stars = Array.from({ length: count }, () => {
+      const isPink = Math.random() < 0.3;
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: isPink
+          ? Math.random() * 0.7 + 0.8   // 0.8 ~ 1.5 px
+          : Math.random() * 0.6 + 0.6,  // 0.6 ~ 1.2 px
+        color:  isPink ? '#D4919F' : '#FFFAF8',
+        phase:  Math.random() * Math.PI * 2,
+        period: Math.random() * 2000 + 1500, // 1500 ~ 3500 ms
+      };
+    });
+
+    // 星座各点初始闪烁相位
+    constPhases = CONST_PTS.map(() => Math.random() * Math.PI * 2);
+  }
+
+  // ---- 触发一次流星 ----
+  function spawnMeteor(now: number): void {
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // 起点：右上角区域
+    const ox = w * (0.6 + Math.random() * 0.4);
+    const oy = h * (Math.random() * 0.3);
+
+    const len = 100 + Math.random() * 40; // 100 ~ 140 px
+    const speed = 300; // px/s，约 0.8s 走完约 240px
+    const cos45 = 0.7071;
+
+    // 主流星（白色）
+    meteors.push({
+      ox, oy,
+      vx: -cos45 * speed / 1000,
+      vy:  cos45 * speed / 1000,
+      color: 'white', width: 1.5,
+      length: len,
+      startTime: now, duration: 800,
+    });
+
+    // 偶发粉色流星（30% 概率，延迟 300ms）
+    if (Math.random() < 0.3) {
+      meteors.push({
+        ox, oy,
+        vx: -cos45 * speed / 1000,
+        vy:  cos45 * speed / 1000,
+        color: '#D4919F', width: 1,
+        length: len * 0.85,
+        startTime: now + 300, duration: 800,
+      });
+    }
+  }
+
+  // ---- 绘制单颗流星 ----
+  function drawMeteor(m: Meteor, now: number): void {
+    if (now < m.startTime) return;
+    const elapsed  = now - m.startTime;
+    const progress = Math.min(elapsed / m.duration, 1);
+
+    // 淡入淡出：前 25% 淡入，后 25% 淡出
+    const alpha =
+      progress < 0.25 ? progress / 0.25 :
+      progress > 0.75 ? (1 - progress) / 0.25 : 1;
+
+    if (alpha <= 0) return;
+
+    // 头部当前位置
+    const hx = m.ox + m.vx * elapsed;
+    const hy = m.oy + m.vy * elapsed;
+    // 尾部（向右上方偏移 length 个单位）
+    const tx = hx + 0.7071 * m.length;
+    const ty = hy - 0.7071 * m.length;
+
+    // 渐变：尾部透明 → 头部不透明
+    const grad = ctx.createLinearGradient(tx, ty, hx, hy);
+    if (m.color === 'white') {
+      grad.addColorStop(0, `rgba(255,255,255,0)`);
+      grad.addColorStop(1, `rgba(255,255,255,${alpha})`);
+    } else {
+      grad.addColorStop(0, `rgba(212,145,159,0)`);
+      grad.addColorStop(1, `rgba(212,145,159,${alpha})`);
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(hx, hy);
+    ctx.strokeStyle = grad;
+    ctx.lineWidth   = m.width;
+    ctx.lineCap     = 'round';
+    ctx.stroke();
+
+    // 头部亮点
+    ctx.beginPath();
+    ctx.arc(hx, hy, 2, 0, Math.PI * 2);
+    ctx.fillStyle   = m.color === 'white' ? 'rgba(255,255,255,' + alpha + ')' : `rgba(212,145,159,${alpha})`;
+    ctx.fill();
+  }
+
+  // ---- 绘制星座（右下角或移动端底部居中） ----
+  function drawConstellation(dt: number): void {
+    const isMobile = canvas.width < 640;
+    const scale    = isMobile ? 0.6 : 1;
+    const offX     = isMobile
+      ? (canvas.width - 200 * scale) / 2
+      : canvas.width - 200 * scale - 40;
+    const offY = canvas.height - 150 * scale - (isMobile ? 20 : 40);
+
+    ctx.save();
+    ctx.translate(offX, offY);
+    ctx.scale(scale, scale);
+
+    // 连线
+    ctx.strokeStyle   = '#D4919F';
+    ctx.globalAlpha   = 0.2;
+    ctx.lineWidth     = 1;
+    for (const [a, b] of CONST_EDGES) {
+      const [x1, y1] = CONST_PTS[a];
+      const [x2, y2] = CONST_PTS[b];
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+
+    // 星点（参与闪烁动画）
+    for (let i = 0; i < CONST_PTS.length; i++) {
+      constPhases[i] += (dt / constPeriods[i]) * Math.PI * 2;
+      const alpha = 0.5 + 0.5 * Math.sin(constPhases[i]);
+      const [x, y] = CONST_PTS[i];
+      ctx.beginPath();
+      ctx.arc(x, y, CONST_RADII[i], 0, Math.PI * 2);
+      ctx.fillStyle   = CONST_COLORS[i];
+      ctx.globalAlpha = alpha;
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  // ---- 主动画循环 ----
+  let lastTime    = 0;
+  let meteorTimer = 0;
+  let meteorInterval = 4000 + Math.random() * 4000;
+
+  function animate(now: number): void {
+    const dt = lastTime === 0 ? 16 : now - lastTime;
+    lastTime = now;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 第一层：繁星闪烁
+    for (const star of stars) {
+      star.phase += (dt / star.period) * Math.PI * 2;
+      const alpha = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(star.phase));
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+      ctx.fillStyle   = star.color;
+      ctx.globalAlpha = alpha;
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // 第二层：流星（计时触发）
+    meteorTimer += dt;
+    if (meteorTimer >= meteorInterval) {
+      spawnMeteor(now);
+      meteorTimer     = 0;
+      meteorInterval  = 4000 + Math.random() * 4000;
+    }
+    // 清理已完成的流星
+    meteors = meteors.filter(m => now < m.startTime + m.duration + 100);
+    for (const m of meteors) drawMeteor(m, now);
+
+    // 第三层：星座连线
+    drawConstellation(dt);
+
+    requestAnimationFrame(animate);
+  }
+
+  // ---- 启动 ----
+  init();
+  requestAnimationFrame(animate);
+
+  // 窗口大小变化时重新初始化星点位置
+  window.addEventListener('resize', init);
+</script>

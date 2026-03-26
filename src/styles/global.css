@@ -2,20 +2,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+/* ===== 暗色模式变体（class 驱动，覆盖默认的 prefers-color-scheme） ===== */
+@variant dark (&:where(.dark, .dark *));
+
 /* ===== CSS 变量 / 配色方案 ===== */
 :root {
   --bg-main:    #FFFAF8;
   --bg-card:    #FFF0EE;
+  --bg-hover:   #FDE8EC;
   --accent:     #F4A7B9;
   --accent-alt: #A8D8C8;
   --text:       #2D2D2D;
   --text-muted: #9CA3AF;
   --divider:    #F3E8E8;
+  --code-bg:    #FFF0EE;
 }
 
-/* ===== 基础全局样式 ===== */
+/* 暗色模式变量覆盖 */
+html.dark {
+  --bg-main:      #0F0E17;
+  --bg-card:      #1A1A2E;
+  --bg-hover:     #22223a;
+  --accent:       #D4919F;
+  --accent-subtle:#2a1520;
+  --text:         #FFFAF8;
+  --text-muted:   #a0a0c0;
+  --divider:      #2a2a40;
+  --code-bg:      #12111f;
+}
+
+/* ===== 主题切换过渡动画 ===== */
 html {
   scroll-behavior: smooth;
+  transition: background-color 300ms ease, color 300ms ease;
 }
 
 body {
@@ -24,6 +43,7 @@ body {
   font-family: 'Noto Serif SC', 'Source Han Serif CN', STSong, serif;
   line-height: 1.8;
   min-height: 100vh;
+  transition: background-color 300ms ease, color 300ms ease;
 }
 
 /* ===== 动画：Hero 立绘浮动 ===== */
@@ -45,6 +65,14 @@ body {
   pointer-events: none;
   animation: sakura-fall linear infinite;
   z-index: 0;
+}
+
+/* 暗色模式下隐藏花瓣；亮色模式下隐藏星空；两套动效互斥 */
+html.dark #sakura-container {
+  display: none !important;
+}
+html:not(.dark) #starry-background {
+  display: none !important;
 }
 
 /* ===== 打字机光标 ===== */
@@ -79,10 +107,12 @@ body {
 .prose-blog a:hover { color: var(--accent); }
 .prose-blog code {
   font-family: 'JetBrains Mono', monospace;
-  background: var(--bg-card);
+  background: var(--code-bg);
   padding: 0.1em 0.35em;
   border-radius: 4px;
   font-size: 0.875em;
+  color: var(--text);
+  transition: background-color 300ms ease, color 300ms ease;
 }
 .prose-blog pre {
   position: relative;

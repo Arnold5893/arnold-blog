@@ -23,7 +23,12 @@ const readingTime = getReadingTime(post.body ?? '');
 
 <a
   href={`/blog/${post.id}`}
-  class="group block bg-[#FFF0EE] rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-[#F3E8E8]"
+  class="group block rounded-2xl overflow-hidden
+         hover:shadow-lg hover:-translate-y-1 transition-all duration-300
+         border
+         bg-[#FFF0EE] dark:bg-[#1A1A2E]
+         hover:bg-[#FDE8EC] dark:hover:bg-[#22223a]
+         border-[#F3E8E8] dark:border-[#2a2a40]"
 >
   {cover && (
     <div class="w-full aspect-video overflow-hidden">
@@ -41,7 +46,9 @@ const readingTime = getReadingTime(post.body ?? '');
     {tags.length > 0 && (
       <div class="flex flex-wrap gap-1.5 mb-3">
         {tags.slice(0, 3).map(tag => (
-          <span class="text-xs px-2 py-0.5 rounded-full bg-white text-[#F4A7B9]">
+          <span class="text-xs px-2 py-0.5 rounded-full
+                       bg-white dark:bg-[#2a1520]
+                       text-[#F4A7B9] dark:text-[#D4919F]">
             #{tag}
           </span>
         ))}
@@ -49,15 +56,21 @@ const readingTime = getReadingTime(post.body ?? '');
     )}
 
     <!-- 标题 -->
-    <h3 class="text-base font-bold text-[#2D2D2D] group-hover:text-[#F4A7B9] transition-colors line-clamp-2 mb-2">
+    <h3 class="text-base font-bold line-clamp-2 mb-2 transition-colors
+               text-[#2D2D2D] dark:text-[#FFFAF8]
+               group-hover:text-[#F4A7B9] dark:group-hover:text-[#D4919F]">
       {title}
     </h3>
 
     <!-- 摘要 -->
-    <p class="text-sm text-[#9CA3AF] line-clamp-2 mb-4">{description}</p>
+    <p class="text-sm line-clamp-2 mb-4
+              text-[#9CA3AF] dark:text-[#a0a0c0]">
+      {description}
+    </p>
 
     <!-- 日期 + 阅读时长 -->
-    <div class="flex items-center justify-between text-xs text-[#9CA3AF]">
+    <div class="flex items-center justify-between text-xs
+                text-[#9CA3AF] dark:text-[#7070a0]">
       <span>{formattedDate}</span>
       <span>{readingTime}阅读</span>
     </div>

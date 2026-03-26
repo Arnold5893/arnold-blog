@@ -1,25 +1,52 @@
 ---
 /**
  * Comments.astro — Giscus 评论区（基于 GitHub Discussions）
+ * 根据当前主题动态加载，并监听主题切换事件实时更新
  */
 ---
 
-<section class="mt-10 pt-8 border-t border-[#F3E8E8]">
-  <h3 class="text-lg font-bold text-[#2D2D2D] mb-6">评论</h3>
-  <script
-    src="https://giscus.app/client.js"
-    data-repo="Arnold5893/blog-comments"
-    data-repo-id="R_kgDORuR-Ng"
-    data-category="Announcements"
-    data-category-id="DIC_kwDORuR-Ns4C5Ezb"
-    data-mapping="pathname"
-    data-strict="0"
-    data-reactions-enabled="1"
-    data-emit-metadata="0"
-    data-input-position="top"
-    data-theme="light"
-    data-lang="zh-CN"
-    crossorigin="anonymous"
-    async
-  ></script>
+<section
+  id="comments-section"
+  class="mt-10 pt-8 border-t border-[#F3E8E8] dark:border-[#2a2a40]"
+>
+  <h3 class="text-lg font-bold mb-6 text-[#2D2D2D] dark:text-[#FFFAF8]">评论</h3>
 </section>
+
+<script>
+  /** 加载 Giscus，theme 根据当前主题决定 */
+  function loadGiscus(): void {
+    const isDark = document.documentElement.classList.contains('dark');
+    const script  = document.createElement('script');
+
+    script.src = 'https://giscus.app/client.js';
+    script.setAttribute('data-repo',              'Arnold5893/blog-comments');
+    script.setAttribute('data-repo-id',           'R_kgDORuR-Ng');
+    script.setAttribute('data-category',          'Announcements');
+    script.setAttribute('data-category-id',       'DIC_kwDORuR-Ns4C5Ezb');
+    script.setAttribute('data-mapping',           'pathname');
+    script.setAttribute('data-strict',            '0');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-emit-metadata',     '0');
+    script.setAttribute('data-input-position',    'top');
+    script.setAttribute('data-theme',             isDark ? 'dark' : 'light');
+    script.setAttribute('data-lang',              'zh-CN');
+    script.crossOrigin = 'anonymous';
+    script.async       = true;
+
+    document.getElementById('comments-section')!.appendChild(script);
+  }
+
+  loadGiscus();
+
+  /** 主题切换时通过 postMessage 通知 Giscus iframe 更新主题 */
+  document.addEventListener('theme-change', (e: Event) => {
+    const isDark = (e as CustomEvent<{ dark: boolean }>).detail.dark;
+    const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+    if (iframe?.contentWindow) {
+      iframe.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+        'https://giscus.app',
+      );
+    }
+  });
+</script>
