@@ -158,17 +158,25 @@ html:not(.dark) #starry-background {
 /* 仅在 .dark 下生效，白天模式不做任何处理 */
 .dark .hero-avatar-wrapper {
   -webkit-mask-image: radial-gradient(
-    ellipse 75% 80% at 55% 45%,
-    black 40%,
-    rgba(0, 0, 0, 0.6) 65%,
+    ellipse 70% 75% at 52% 42%,
+    black 25%,
+    rgba(0, 0, 0, 0.7) 45%,
+    rgba(0, 0, 0, 0.3) 65%,
     transparent 100%
   );
   mask-image: radial-gradient(
-    ellipse 75% 80% at 55% 45%,
-    black 40%,
-    rgba(0, 0, 0, 0.6) 65%,
+    ellipse 70% 75% at 52% 42%,
+    black 25%,
+    rgba(0, 0, 0, 0.7) 45%,
+    rgba(0, 0, 0, 0.3) 65%,
     transparent 100%
   );
+}
+
+/* mix-blend-mode: screen 让图片白色背景与暗色底色融合消失
+   lighten 在纯白背景上效果不够彻底，screen 消除白底更干净 */
+.dark .hero-avatar-wrapper img {
+  mix-blend-mode: screen;
 }
 
 /* ===== 滚动条美化 ===== */
