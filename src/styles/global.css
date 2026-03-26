@@ -173,10 +173,12 @@ html:not(.dark) #starry-background {
   );
 }
 
-/* mix-blend-mode: screen 让图片白色背景与暗色底色融合消失
-   lighten 在纯白背景上效果不够彻底，screen 消除白底更干净 */
+/* multiply：白色 × 暗底色 = 暗底色，白底彻底消融
+   screen/lighten 的问题：screen(白,暗) = 白，白底反而保留
+   brightness 补偿 multiply 对人物本身造成的整体变暗 */
 .dark .hero-avatar-wrapper img {
-  mix-blend-mode: screen;
+  mix-blend-mode: multiply;
+  filter: brightness(1.5) saturate(1.1);
 }
 
 /* ===== 滚动条美化 ===== */
