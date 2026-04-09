@@ -24,6 +24,22 @@ export async function getStaticPaths() {
 const { post, prev, next } = Astro.props;
 const { Content } = await render(post);
 const { title, date, tags, description } = post.data;
+
+// 计算相关文章：按标签匹配数排序，最多展示 5 篇
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const relatedPosts = allPosts
+  .filter(p => p.id !== post.id)
+  .map(p => ({
+    id: p.id,
+    title: p.data.title,
+    date: p.data.date,
+    tags: p.data.tags ?? [],
+    score: (p.data.tags ?? []).filter(t => tags.includes(t)).length,
+  }))
+  .filter(p => p.score > 0)
+  .sort((a, b) => b.score - a.score || new Date(b.date).getTime() - new Date(a.date).getTime())
+  .slice(0, 5)
+  .map(({ id, title, date, tags }) => ({ id, title, date, tags }));
 ---
 
 <PostLayout
@@ -32,6 +48,7 @@ const { title, date, tags, description } = post.data;
   tags={tags}
   description={description}
   rawContent={post.body ?? ''}
+  relatedPosts={relatedPosts}
 >
   <!-- 文章正文 -->
   <Content />

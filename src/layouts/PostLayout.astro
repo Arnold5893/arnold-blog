@@ -7,15 +7,23 @@ import TOC from '../components/blog/TOC.astro';
 import Comments from '../components/blog/Comments.astro';
 import { getReadingTime } from '../utils/reading-time';
 
+interface RelatedPost {
+  id: string;
+  title: string;
+  date: string;
+  tags: string[];
+}
+
 interface Props {
   title: string;
   date: string;
   tags: string[];
   description: string;
   rawContent: string;
+  relatedPosts?: RelatedPost[];
 }
 
-const { title, date, tags, description, rawContent } = Astro.props;
+const { title, date, tags, description, rawContent, relatedPosts = [] } = Astro.props;
 const readingTime = getReadingTime(rawContent);
 
 // 格式化日期
@@ -80,10 +88,93 @@ const formattedDate = dateObj.toLocaleDateString('zh-CN', {
         </div>
       </article>
 
-      <!-- 右侧悬浮目录（桌面端） -->
+      <!-- 右侧悬浮侧边栏（桌面端） -->
       <aside class="hidden xl:block w-56 shrink-0">
-        <TOC />
+        <div class="sticky top-24 max-h-[calc(100vh-8rem)] flex flex-col">
+          <!-- 标签栏 -->
+          <div class="flex gap-1 mb-3 border-b border-[#F3E8E8] dark:border-[#2a2a40] pb-2">
+            <button
+              id="tab-toc"
+              class="sidebar-tab px-2 py-1 text-xs font-semibold rounded transition-colors
+                     text-[#F4A7B9] bg-[#FFF0EE] dark:bg-[#2a1520] dark:text-[#D4919F]"
+              data-target="panel-toc"
+            >目录</button>
+            {relatedPosts.length > 0 && (
+              <button
+                id="tab-related"
+                class="sidebar-tab px-2 py-1 text-xs font-semibold rounded transition-colors
+                       text-[#9CA3AF] hover:text-[#F4A7B9] dark:text-[#7070a0]"
+                data-target="panel-related"
+              >相关文章</button>
+            )}
+          </div>
+
+          <!-- 目录面板 -->
+          <div id="panel-toc" class="sidebar-panel overflow-y-auto flex-1">
+            <TOC />
+          </div>
+
+          <!-- 相关文章面板 -->
+          {relatedPosts.length > 0 && (
+            <div id="panel-related" class="sidebar-panel hidden overflow-y-auto flex-1 space-y-3">
+              {relatedPosts.map(p => (
+                <a
+                  href={`/blog/${p.id}`}
+                  class="block group"
+                >
+                  <p class="text-xs font-medium leading-snug text-[#2D2D2D] dark:text-[#FFFAF8]
+                             group-hover:text-[#F4A7B9] dark:group-hover:text-[#D4919F]
+                             transition-colors line-clamp-2">
+                    {p.title}
+                  </p>
+                  <p class="text-[10px] text-[#9CA3AF] dark:text-[#7070a0] mt-0.5">
+                    {new Date(p.date).toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </p>
+                  {p.tags.length > 0 && (
+                    <div class="flex flex-wrap gap-1 mt-1">
+                      {p.tags.slice(0, 3).map(tag => (
+                        <span class="text-[9px] px-1.5 py-0.5 rounded-full
+                                     bg-[#FFF0EE] dark:bg-[#2a1520]
+                                     text-[#F4A7B9] dark:text-[#D4919F]">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
       </aside>
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  // 侧边栏标签切换
+  const tabs = document.querySelectorAll<HTMLButtonElement>('.sidebar-tab');
+  const panels = document.querySelectorAll<HTMLDivElement>('.sidebar-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const targetId = tab.dataset.target!;
+
+      // 更新 tab 样式
+      tabs.forEach(t => {
+        const isActive = t.dataset.target === targetId;
+        t.classList.toggle('text-[#F4A7B9]', isActive);
+        t.classList.toggle('dark:text-[#D4919F]', isActive);
+        t.classList.toggle('bg-[#FFF0EE]', isActive);
+        t.classList.toggle('dark:bg-[#2a1520]', isActive);
+        t.classList.toggle('text-[#9CA3AF]', !isActive);
+        t.classList.toggle('dark:text-[#7070a0]', !isActive);
+      });
+
+      // 切换面板显示
+      panels.forEach(panel => {
+        panel.classList.toggle('hidden', panel.id !== targetId);
+      });
+    });
+  });
+</script>
