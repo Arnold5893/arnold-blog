@@ -10,6 +10,7 @@ export default defineConfig({
   },
   integrations: [mdx()],
   markdown: {
+    smartypants: false,
     shikiConfig: {
       // 粉绿调主题，契合整体配色风格
       theme: 'rose-pine-dawn',
