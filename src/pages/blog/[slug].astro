@@ -7,18 +7,15 @@ import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post, i) => {
-    const sorted = posts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
-    const idx = sorted.findIndex(p => p.id === post.id);
-    return {
-      params: { slug: post.id },
-      props: {
-        post,
-        prev: sorted[idx + 1] ?? null,
-        next: sorted[idx - 1] ?? null,
-      },
-    };
-  });
+  const sorted = posts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+  return sorted.map((post, idx) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      prev: sorted[idx + 1] ?? null,
+      next: sorted[idx - 1] ?? null,
+    },
+  }));
 }
 
 const { post, prev, next } = Astro.props;
