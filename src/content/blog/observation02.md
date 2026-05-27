@@ -2,7 +2,7 @@
 title: "Learning by doing"
 date: '2026-05-27'
 tags: ['观察']
-description: 'You miss 100% of the shots you don‘t take'
+description: "You miss 100% of the shots you don't take"
 draft: false
 ---
 本文基于自己近期在做的事情，以及刚好和朋友聊到这个，借此机会梳理一下自己的想法
