@@ -6,6 +6,9 @@ description: 'chapter1'
 draft: false
 ---
 [项目链接](https://github.com/bojieli/ai-agent-book)
+
+(二编)补充实验123的对比和归纳总结
+
 ### 本章回顾&总结
 Agent = llm + 上下文 + 工具，llm是决策核心，上下文决定llm能看到什么，工具决定llm能做什么，在模型固定时，重新定义或扩展上下文（观察空间）和工具（动作空间）能有效提升Agent的整体能力（参考openclaw），注意这种扩展按需进行，且需要考虑合规性
 
@@ -25,7 +28,37 @@ Harness里那些给模型能力短板打补丁的部分，会随着模型变强�
 1. Agent和Harness的关系：Agent = Model + Harness
 Harness是Agent之内、llm之外的部分，包括上下文管理、工具管理、循环控制、约束/安全、验证与纠错、记录与证据
 2. Harness和ReAct循环的关系：ReAct循环是Harness的组成部分，Harness驱动ReAct循环、决定循环何时停
-#### 思考题（附我的思考和ai参考答案）：
+### 实验123的对比和归纳总结：不同Agent设计之间的差别
+#### 工具schema和工具调用：
+
+实验1：工具定义、描述由开发者自己写
+
+向llm发起请求（messages、tool schema等）后，根据llm返回的response，调用工具，执行自己写的函数（电脑本地执行），并获取结果
+
+实验2：`_get_tools`函数先向模型服务商发起请求获取可使用的工具及工具schema
+
+向llm发起请求（messages、tool schema等）后，根据llm返回的response，`_execute_formula`函数向kimi的Formula Fibers端点发起请求调用对应的工具，由Moonshot 服务器执行工具调用
+
+
+实验3：`_tools(self)`函数（开发者提前写好的，这里可以控制想让模型用那些工具）告诉模型可以使用哪些工具
+
+向llm发起请求（messages、可使用的工具名称等，不需要提供tool schema）后，模型根据用户问题在openai服务器内部直接调用工具-获取结果（这个过程可以是多次的），最后给用户回复
+
+总结：实验2 在**Moonshot 服务器**调用工具，但开发者需要写调度代码，将模型给出的工具名和参数转发到Moonshot 服务器的 Fiber 端点；实验3 在Openai服务器调用工具，只需要授权模型这次可使用的工具，不需要写调度代码，也不需要告诉模型工具schema（工具schema内建在模型和平台里）
+
+#### 如何把历史消息传给llm：
+实验1/实验2：每轮请求把完整conversation_history数组重新给llm发一遍
+
+实验3：通过previous_response_id，（openai）服务器将历史消息有序存储，可以根据id进行查找
+
+#### ReAct循环：
+实验1：根据最大迭代次数、是否有工具调用来决定是否结束while循环
+
+实验2：根据finish_reason和最大迭代次数来决定是否结束while循环
+
+实验3：没有外层ReAct循环（ReAct 循环搬进了 OpenAI 服务器内部执行），只需要调用一次模型即可得到最终结果
+
+### 思考题（附个人思考和ai参考答案）：
 1. 如果你只能给一个 Agent 系统增加一项能力——更强的模型、更丰富的上下文还是更多的工具—— 你会选哪个？在什么条件下你的选择会改变？
 
 对于日常任务：当前的模型能力已经足够强，我倾向于选择更丰富的上下文，尤其是跨对话的记忆能力更强，这样Agent更像我的左膀右臂hhh，可以高效地帮我处理各种事宜
