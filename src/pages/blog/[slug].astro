@@ -67,9 +67,39 @@ const relatedPosts = allPosts
   </nav>
 </PostLayout>
 
-<!-- 代码块复制按钮 -->
-<script>
+<!-- Mermaid 图表渲染与代码块复制按钮 -->
+<script is:inline>
+  const mermaidBlocks = document.querySelectorAll('.prose-blog pre code.language-mermaid');
+
+  if (mermaidBlocks.length > 0) {
+    const mermaidScript = document.createElement('script');
+    mermaidScript.src = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
+    mermaidScript.onload = () => {
+      const mermaid = window.mermaid;
+      if (!mermaid) return;
+
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default',
+        securityLevel: 'strict',
+      });
+
+      mermaidBlocks.forEach((code, index) => {
+        const diagram = document.createElement('div');
+        diagram.className = 'mermaid';
+        diagram.id = `mermaid-diagram-${index}`;
+        diagram.textContent = code.textContent ?? '';
+        code.closest('pre')?.replaceWith(diagram);
+      });
+
+      mermaid.run({ nodes: document.querySelectorAll('.prose-blog .mermaid') });
+    };
+    document.head.appendChild(mermaidScript);
+  }
+
   document.querySelectorAll('.prose-blog pre').forEach(pre => {
+    if (pre.querySelector('code.language-mermaid')) return;
+
     const btn = document.createElement('button');
     btn.className = 'copy-btn';
     btn.textContent = 'copy';

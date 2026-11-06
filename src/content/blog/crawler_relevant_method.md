@@ -17,7 +17,7 @@ draft: false
 | 运行环境层 | JS能读到的浏览器属性        | webdriver检测、Canvas/WebGL指纹 |
 | 行为层   | 鼠标、键盘、访问节奏         | 轨迹识别、验证码、访问模式分析            |
 `一个爬虫方案在某一层伪装得再好，其他层露了horse feet还是会被识别`
-## 爬虫方法：
+## 爬虫方法
 ### 1. 直接 HTTP 请求
 - 原理：不经过浏览器，直接构造HTTP请求拿到HTML或JSON文件，再解析内容
 - 常用工具：requests、httpx、aiohttp、Scrapy，解析用 lxml、BeautifulSoup、parsel
@@ -25,7 +25,7 @@ draft: false
 - 局限
 	- 不能执行JS，前端渲染的页面拿不到数据（Vue/ReAct SPA）
 	- 遇到加密参数时，得先做JS逆向
-	- ==🔴TLS指纹、HTTP/2 指纹和浏览器不一样，容易被JA3识别==
+	- ==TLS指纹、HTTP/2 指纹和浏览器不一样，容易被JA3识别==
 - 操作：打开开发者工具的Network面板找数据接口（Fetch/XHR）。因为很多页面的数据来自一个JSON接口
 ### 2. 抓包找 XHR 接口
 - 原理：现代很多站点是SPA（服务器返回HTML框架+JS文件），页面只是壳，真实数据走XHR/fetch 返回JSON
