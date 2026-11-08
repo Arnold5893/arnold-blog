@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import mdx from '@astrojs/mdx';
+import remarkDoubleEqualsBold from './src/plugins/remark-double-equals-bold.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,6 +12,8 @@ export default defineConfig({
   integrations: [mdx()],
   markdown: {
     smartypants: false,
+    // `==文本==` → 加粗（GFM 不支持该语法，需要自定义 remark 插件）
+    remarkPlugins: [remarkDoubleEqualsBold],
     rehypePlugins: [
       () => tree => {
         const wrapTables = node => {

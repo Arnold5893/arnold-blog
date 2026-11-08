@@ -103,6 +103,13 @@ html:not(.dark) #starry-background {
 .prose-blog h2 { font-size: 1.5rem; border-bottom: 2px solid var(--divider); padding-bottom: 0.25rem; }
 .prose-blog h3 { font-size: 1.25rem; }
 .prose-blog p  { margin-bottom: 1.25rem; }
+/* 显式声明：`**文本**` 与 `==文本==` 都渲染为 <strong>，确保中文字体真正加粗 */
+.prose-blog strong,
+.prose-blog b {
+  font-weight: 700;
+  color: var(--text);
+}
+.prose-blog em { font-style: italic; }
 .prose-blog a  { color: #d97199; text-decoration: underline; text-underline-offset: 3px; }
 .prose-blog a:hover { color: var(--accent); }
 .prose-blog code {
